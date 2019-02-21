@@ -53,6 +53,25 @@ class Amino {
         return prefixBytes
     }
 
+    unMarshalBinary(key, dataBuffer) {
+        let prefixBytes = this._keyMap[key].prefix;
+        if(dataBuffer.length<this._keyMap[key].prefix.length+2){
+            console.log('buffer is wrong')
+            return null
+        }
+        if(dataBuffer.slice(0,4).toString('hex')!=Buffer.from(prefixBytes).toString('hex')){
+            console.log('prefixBytes is wrong')
+            return null
+        }
+        var msglength=dataBuffer.slice(4,5)[0];
+        var msgbuffer=dataBuffer.slice(5,dataBuffer.length);
+        if(msgbuffer.length!=msglength){
+            console.log('msg is wrong')
+            return null
+        }
+        return msgbuffer
+    }
+
     MarshalJSON(key, message) {
         let pair = {
             "type": key,
